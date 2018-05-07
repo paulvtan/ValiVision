@@ -17,7 +17,25 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="3073" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="150" y="353" width="114" height="30"/>
+                                <state key="normal" title="Take Photo"/>
+                                <constraints>
+                                    <constraint id="3077" firstItem="3073" firstAttribute="height" constant="30"/>
+                                </constraints>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint id="3075" firstItem="8bC-Xf-vdC" firstAttribute="trailingMargin" secondItem="3073" secondAttribute="trailing" constant="130"/>
+                            <constraint id="3076" firstItem="3073" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="130"/>
+                            <constraint id="3078" firstItem="3073" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="333"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="UIViewMainScreen" destination="8bC-Xf-vdC" id="name-outlet-8bC-Xf-vdC"/>
+                        <outlet property="UIButtonTakePhoto" destination="3073" id="name-outlet-3073"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
