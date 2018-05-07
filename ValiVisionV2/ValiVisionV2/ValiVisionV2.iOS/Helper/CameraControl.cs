@@ -90,15 +90,10 @@ namespace ValiVisionV2.iOS.Helper
             try
             {
                 AVCaptureDevice frontCamera = null;
-                //Set Orientation to Front Camera
-                foreach (var device in AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video))
-                {
-                    if (device.Position == AVCaptureDevicePosition.Front)
-                    {
-                        frontCamera = device;
-                    }
-                }
-                
+
+                var devices = AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video);
+                frontCamera = devices.FirstOrDefault(device => device.Position == AVCaptureDevicePosition.Front); //Choose the front camera.
+
                 ConfigureCameraForDevice(frontCamera);
                 captureSession = new AVCaptureSession();
                 var captureDevice = AVCaptureDevice.DefaultDeviceWithMediaType(AVMediaType.Video);
