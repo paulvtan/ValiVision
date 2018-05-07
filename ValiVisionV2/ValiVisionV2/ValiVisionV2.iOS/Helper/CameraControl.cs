@@ -48,13 +48,7 @@ namespace ValiVisionV2.iOS.Helper
                     {
                         this.videoPreviewLayer = new AVCaptureVideoPreviewLayer(this.captureSession)
                         {
-                            //Mirror the video
-                            Frame = backgrounUIView.Bounds,
-                            Connection =
-                            {
-                                AutomaticallyAdjustsVideoMirroring = false,
-                                VideoMirrored = false
-                            }
+                            Frame = backgrounUIView.Bounds
                         };
                         videoPreviewLayer.VideoGravity = AVLayerVideoGravity.ResizeAspectFill;
                         backgrounUIView.Layer.AddSublayer(videoPreviewLayer);
