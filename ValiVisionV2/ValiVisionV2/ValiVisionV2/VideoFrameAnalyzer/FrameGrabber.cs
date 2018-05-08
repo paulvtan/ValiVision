@@ -1,15 +1,21 @@
-﻿using System;
+﻿using OpenCvSharp;
+using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using OpenCvSharp;
+using UIKit;
 using ValiVisionV2.VideoFrameAnalyzer.VideoFrameAnalyzer;
 
 namespace ValiVisionV2.VideoFrameAnalyzer
 {
+    // This class carry a frame from camera control.
+    public static class CurrentFrame
+    {
+        public static UIImage Frame {get; set;}
+    }
+
+
     /// <summary> A frame grabber. </summary>
     /// <typeparam name="AnalysisResultType"> Type of the analysis result. This is the type that
     ///     the AnalysisFunction will return, when it calls some API on a video frame. </typeparam>
@@ -113,10 +119,11 @@ namespace ValiVisionV2.VideoFrameAnalyzer
         /// <summary> (Only available in TRACE_GRABBER builds) logs a message. </summary>
         /// <param name="format"> Describes the format to use. </param>
         /// <param name="args">   Event information. </param>
-        [Conditional("TRACE_GRABBER")]
+        //[Conditional("TRACE_GRABBER")]
         protected void LogMessage(string format, params object[] args)
         {
-            ConcurrentLogger.WriteLine(String.Format(format, args));
+            //ConcurrentLogger.WriteLine(String.Format(format, args));
+            Debug.WriteLine(String.Format(format, args));
         }
 
         /// <summary> Starts processing frames from a live camera. Stops any current video source
@@ -132,7 +139,6 @@ namespace ValiVisionV2.VideoFrameAnalyzer
 
             await StopProcessingAsync().ConfigureAwait(false);
 
-            _reader = new VideoCapture(cameraIndex);
 
             Debug.WriteLine("Start Processing Camera");
 
@@ -143,8 +149,9 @@ namespace ValiVisionV2.VideoFrameAnalyzer
                 _fps = 30;
             }
 
-            Width = _reader.FrameWidth;
-            Height = _reader.FrameHeight;
+            
+            //Width = _reader.FrameWidth;
+            //Height = _reader.FrameHeight;
 
             StartProcessing(TimeSpan.FromSeconds(1 / _fps), () => DateTime.Now);
 
@@ -168,6 +175,7 @@ namespace ValiVisionV2.VideoFrameAnalyzer
             // Create a background thread that will grab frames in a loop.
             _producerTask = Task.Factory.StartNew(() =>
             {
+                
                 var frameCount = 0;
                 while (!_stopping)
                 {
@@ -181,12 +189,16 @@ namespace ValiVisionV2.VideoFrameAnalyzer
 
                     // Grab single frame. 
                     var timestamp = timestampFn();
-                    Mat image = new Mat();
-                    bool success = _reader.Read(image);
+                    
+                    //Xamarin.iOS implementation single frame grabbing.
+                    UIImage image = CurrentFrame.Frame;
+                    //--------------------------
+
+                    
 
                     LogMessage("Producer: frame-grab took {0} ms", (DateTime.Now - startTime).Milliseconds);
 
-                    if (!success)
+                    if (image == null)
                     {
                         // If we've reached the end of the video, stop here. 
                         if (_reader.CaptureType == CaptureType.File)
@@ -205,7 +217,6 @@ namespace ValiVisionV2.VideoFrameAnalyzer
                             continue;
                         }
                     }
-
                     // Package the image for submission.
                     VideoFrameMetadata meta;
                     meta.Index = frameCount;
@@ -256,6 +267,7 @@ namespace ValiVisionV2.VideoFrameAnalyzer
 
             _consumerTask = Task.Factory.StartNew(async () =>
             {
+
                 while (!_analysisTaskQueue.IsCompleted)
                 {
                     LogMessage("Consumer: waiting for task to get added");
@@ -368,7 +380,7 @@ namespace ValiVisionV2.VideoFrameAnalyzer
         public void TriggerAnalysisOnInterval(TimeSpan interval)
         {
             _resetTrigger = true;
-
+            
             // Keep track of the next timestamp to trigger. 
             DateTime nextCall = DateTime.MinValue;
             _analysisPredicate = (VideoFrame frame) =>
@@ -467,7 +479,7 @@ namespace ValiVisionV2.VideoFrameAnalyzer
         protected async Task<NewResultEventArgs> DoAnalyzeFrame(VideoFrame frame)
         {
             CancellationTokenSource source = new CancellationTokenSource();
-
+            
             // Make a local reference to the function, just in case someone sets
             // AnalysisFunction = null before we can call it. 
             var fcn = AnalysisFunction;

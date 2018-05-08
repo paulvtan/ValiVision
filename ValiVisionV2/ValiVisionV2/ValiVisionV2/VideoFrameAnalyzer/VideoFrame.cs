@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UIKit;
 
 namespace ValiVisionV2.VideoFrameAnalyzer
 {
@@ -57,7 +58,7 @@ namespace ValiVisionV2.VideoFrameAnalyzer
             /// <summary> Constructor. </summary>
             /// <param name="image">    The image captured by the camera. </param>
             /// <param name="metadata"> The metadata. </param>
-            public VideoFrame(Mat image, VideoFrameMetadata metadata)
+            public VideoFrame(UIImage image, VideoFrameMetadata metadata)
             {
                 Image = image;
                 Metadata = metadata;
@@ -65,7 +66,7 @@ namespace ValiVisionV2.VideoFrameAnalyzer
 
             /// <summary> Gets the image for the frame. </summary>
             /// <value> The image. </value>
-            public Mat Image { get; }
+            public UIImage Image { get; }
 
             /// <summary> Gets the frame's metadata. </summary>
             /// <value> The metadata. </value>

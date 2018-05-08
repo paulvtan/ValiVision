@@ -7,10 +7,16 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ProjectOxford.Face.DotNetStandard" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="OpenCvSharp3-WithoutDll" Version="3.4.1.20180319" />
+    <PackageReference Include="OpenCvSharp3-AnyCPU" Version="3.4.1.20180319" />
     <PackageReference Include="Plugin.Permissions" Version="3.0.0.8" />
     <PackageReference Include="Xam.Plugin.Media" Version="3.2.1" />
     <PackageReference Include="Xamarin.Forms" Version="2.5.1.527436" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Xamarin.iOS">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\ReferenceAssemblies\Microsoft\Framework\Xamarin.iOS\v1.0\Xamarin.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace ValiVisionV2.VideoFrameAnalyzer
             // prints it, the messages will print in order. 
             Task.Run(async () =>
             {
+                
                 // Wait to get access to the queue. 
                 await s_printMutex.WaitAsync();
                 try

@@ -1,26 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using AVFoundation;
+using CoreFoundation;
+using CoreGraphics;
+using CoreMedia;
+using CoreVideo;
 using Foundation;
+using OpenCvSharp;
 using UIKit;
 
 namespace ValiVisionV2.iOS.Helper
 {
     public class CameraControl
     {
+
         AVCaptureSession captureSession;
         AVCaptureDeviceInput captureDeviceInput;
         AVCaptureStillImageOutput stillImageOutput;
         AVCaptureVideoPreviewLayer videoPreviewLayer;
-        UIView currentUIView;
+        UIView CurrentUIView;
+
+        public OutputRecorder outputRecorder;
+        public DispatchQueue queue;
 
         public CameraControl(UIView currentUIView)
         {
-            currentUIView = this.currentUIView;
+            CurrentUIView = currentUIView;
             DebugHelper.DisplayAnnouncement("CameraControl Object Initialized");
         }
 
@@ -36,22 +48,22 @@ namespace ValiVisionV2.iOS.Helper
         }
 
         //Toggle Camera previw on.
-        public void TurnPreviewOn(UIView backgrounUIView, bool option)
+        public void TurnPreviewOn(bool option)
         {
             try
             {
                 //Setup the video preview.
-                if (backgrounUIView != null)
+                if (CurrentUIView != null)
                 {
                     //If toggle on is 'true' and preview has not been initialized
                     if (option && this.videoPreviewLayer == null)
                     {
                         this.videoPreviewLayer = new AVCaptureVideoPreviewLayer(this.captureSession)
                         {
-                            Frame = backgrounUIView.Bounds
+                            Frame = CurrentUIView.Bounds
                         };
                         videoPreviewLayer.VideoGravity = AVLayerVideoGravity.ResizeAspectFill;
-                        backgrounUIView.Layer.AddSublayer(videoPreviewLayer);
+                        CurrentUIView.Layer.AddSublayer(videoPreviewLayer);
                         DebugHelper.DisplayActionResult("Live preview on.");
                     }
                     else if (option)
@@ -63,7 +75,7 @@ namespace ValiVisionV2.iOS.Helper
                     {
                         if (this.videoPreviewLayer != null)
                         {
-                            backgrounUIView.Layer.Sublayers.Last().RemoveFromSuperLayer();
+                            CurrentUIView.Layer.Sublayers.Last().RemoveFromSuperLayer();
                             DebugHelper.DisplayActionResult("Live camera preview off");
                         }
                         else
@@ -87,23 +99,30 @@ namespace ValiVisionV2.iOS.Helper
 
                 var devices = AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video);
                 frontCamera = devices.FirstOrDefault(device => device.Position == AVCaptureDevicePosition.Front); //Choose the front camera.
+                
 
                 ConfigureCameraForDevice(frontCamera);
                 captureSession = new AVCaptureSession();
                 var captureDevice = AVCaptureDevice.DefaultDeviceWithMediaType(AVMediaType.Video);
                 captureDeviceInput = AVCaptureDeviceInput.FromDevice(frontCamera);
                 captureSession.AddInput(captureDeviceInput);
-
                 var dictionary = new NSMutableDictionary();
-                dictionary[AVVideo.CodecKey] = new NSNumber((int) AVVideoCodec.JPEG);
-                stillImageOutput = new AVCaptureStillImageOutput()
-                {
-                    OutputSettings = new NSDictionary()
-                };
+                dictionary[AVVideo.CodecKey] = new NSNumber((int)AVVideoCodec.JPEG);
 
-                captureSession.AddOutput(stillImageOutput);
+                //Configuring the ouput for frame to be captured.
+                var settings = new CVPixelBufferAttributes
+                {
+                    PixelFormatType = CVPixelFormatType.CV32BGRA
+                };
+                using (var output = new AVCaptureVideoDataOutput { WeakVideoSettings = settings.Dictionary })
+                {
+                    queue = new DispatchQueue("myQueue");
+                    outputRecorder = new OutputRecorder();
+                    output.SetSampleBufferDelegateQueue(outputRecorder, queue);
+                    captureSession.AddOutput(output);
+                }
+
                 captureSession.StartRunning();
-                //---------------------------------------
 
                 DebugHelper.DisplayAnnouncement("CameraStream activated");
             }
@@ -138,4 +157,72 @@ namespace ValiVisionV2.iOS.Helper
             }
         }
     }
+
+    //capture frame class - this acts as a producer thread.
+    public class OutputRecorder : AVCaptureVideoDataOutputSampleBufferDelegate
+    {
+        public override void DidOutputSampleBuffer(AVCaptureOutput captureOutput, CMSampleBuffer sampleBuffer, AVCaptureConnection connection)
+        {
+
+            try
+            {
+                var image = ImageFromSampleBuffer(sampleBuffer);
+                // Do something with the image, we just stuff it in our main view.
+                //ImageView.BeginInvokeOnMainThread(() => {
+                //    TryDispose(ImageView.Image);
+                //    ImageView.Image = image;
+                //    ImageView.Transform = CGAffineTransform.MakeRotation(NMath.PI / 2);
+                //});
+
+                // Set current frame to be this frame.
+                ValiVisionV2.VideoFrameAnalyzer.CurrentFrame.Frame = image;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                sampleBuffer.Dispose();
+            }
+        }
+
+        UIImage ImageFromSampleBuffer(CMSampleBuffer sampleBuffer)
+        {
+            // Get the CoreVideo image
+            using (var pixelBuffer = sampleBuffer.GetImageBuffer() as CVPixelBuffer)
+            {
+                // Lock the base address
+                pixelBuffer.Lock(CVOptionFlags.None);
+                // Get the number of bytes per row for the pixel buffer
+                var baseAddress = pixelBuffer.BaseAddress;
+                var bytesPerRow = (int)pixelBuffer.BytesPerRow;
+                var width = (int)pixelBuffer.Width;
+                var height = (int)pixelBuffer.Height;
+                var flags = CGBitmapFlags.PremultipliedFirst | CGBitmapFlags.ByteOrder32Little;
+                // Create a CGImage on the RGB colorspace from the configured parameter above
+                using (var cs = CGColorSpace.CreateDeviceRGB())
+                {
+                    using (var context = new CGBitmapContext(baseAddress, width, height, 8, bytesPerRow, cs, (CGImageAlphaInfo)flags))
+                    {
+                        using (CGImage cgImage = context.ToImage())
+                        {
+                            pixelBuffer.Unlock(CVOptionFlags.None);
+
+                            // TODO: To be improved later
+                            // Rotate the image as it's defaulted to landscape right.
+                            return UIImage.FromImage(cgImage, 10, UIImageOrientation.Right);
+                        }
+                    }
+                }
+            }
+        }
+
+        void TryDispose(IDisposable obj)
+        {
+            if (obj != null)
+                obj.Dispose();
+        }
+    }
 }
+

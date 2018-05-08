@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.Remoting.Channels;
+using System.Threading;
 using UIKit;
 using ValiVisionV2.iOS.Helper;
+using ValiVisionV2.VideoFrameAnalyzer;
 
 namespace ValiVisionV2.iOS
 {
@@ -18,8 +21,17 @@ namespace ValiVisionV2.iOS
             // Perform any additional setup after loading the view, typically from a nib.
             cameraControl = new CameraControl(UIViewMainScreen);
             cameraControl.SetupLiveCameraStream();
-            cameraControl.TurnPreviewOn(UIViewMainScreen, true);
+            cameraControl.TurnPreviewOn(true);
             new FaceDetection();
+            Thread.Sleep(5000);
+            //TODO: Remove after testing what frame looks like
+            Debug.WriteLine("Saving Frame");
+            CurrentFrame.Frame.SaveToPhotosAlbum((image, error) =>
+            {
+                Console.Error.WriteLine(@"				Error: ", error);
+            });
+
+
         }
 
         public override void DidReceiveMemoryWarning()
