@@ -167,14 +167,6 @@ namespace ValiVisionV2.iOS.Helper
             try
             {
                 var image = ImageFromSampleBuffer(sampleBuffer);
-                // Do something with the image, we just stuff it in our main view.
-                //ImageView.BeginInvokeOnMainThread(() => {
-                //    TryDispose(ImageView.Image);
-                //    ImageView.Image = image;
-                //    ImageView.Transform = CGAffineTransform.MakeRotation(NMath.PI / 2);
-                //});
-
-                // Set current frame to be this frame.
                 ValiVisionV2.VideoFrameAnalyzer.CurrentFrame.Frame = image;
             }
             catch (Exception e)

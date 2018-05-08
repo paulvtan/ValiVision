@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.ProjectOxford.Face;
@@ -37,7 +38,8 @@ namespace ValiVisionV2
             {
                 Console.WriteLine("Submitting frame acquired at {0}", frame.Metadata.Timestamp);
                 // Encode image and submit to Face API. 
-                return await faceServiceClient.DetectAsync(frame.Image.AsJPEG().AsStream());
+                IEnumerable<FaceAttributeType> faceAttributes = new FaceAttributeType[] { FaceAttributeType.Gender, FaceAttributeType.Age, FaceAttributeType.Smile, FaceAttributeType.Emotion, FaceAttributeType.Glasses, FaceAttributeType.FacialHair };
+                return await faceServiceClient.DetectAsync(frame.Image.AsJPEG().AsStream(), returnFaceId: true, returnFaceLandmarks: false, returnFaceAttributes: faceAttributes);
             };
 
             // Set up a listener for when we receive a new result from an API call. 
@@ -52,6 +54,19 @@ namespace ValiVisionV2
                 }
                 else
                     Console.WriteLine("New result received for frame acquired at {0}. {1} faces detected", e.Frame.Metadata.Timestamp, e.Analysis.Length);
+
+                //If there's a return result.
+                if (e.Analysis.Length == 1)
+                {
+                    try
+                    {
+                        Console.WriteLine(e.Analysis.First().FaceAttributes.Gender);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                }
             };
 
             // Tell grabber when to call API.
