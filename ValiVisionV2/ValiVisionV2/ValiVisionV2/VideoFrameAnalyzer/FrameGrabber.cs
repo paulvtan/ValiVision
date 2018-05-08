@@ -123,7 +123,8 @@ namespace ValiVisionV2.VideoFrameAnalyzer
         protected void LogMessage(string format, params object[] args)
         {
             //ConcurrentLogger.WriteLine(String.Format(format, args));
-            Debug.WriteLine(String.Format(format, args));
+            //TODO: Un-comment to debug this class.
+            //Debug.WriteLine(String.Format(format, args));
         }
 
         /// <summary> Starts processing frames from a live camera. Stops any current video source

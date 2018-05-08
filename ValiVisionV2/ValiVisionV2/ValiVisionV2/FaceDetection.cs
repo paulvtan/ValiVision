@@ -27,7 +27,7 @@ namespace ValiVisionV2
             // Set up a listener for when we receive a new result from an API call. 
             grabber.NewFrameProvided += (s, e) =>
             {
-                Console.WriteLine("New frame acquired at {0}", e.Frame.Metadata.Timestamp);
+                // Console.WriteLine("New frame acquired at {0}", e.Frame.Metadata.Timestamp);
             };
 
             // Set up Face API call.

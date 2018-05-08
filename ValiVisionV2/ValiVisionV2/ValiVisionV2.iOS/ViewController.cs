@@ -23,15 +23,6 @@ namespace ValiVisionV2.iOS
             cameraControl.SetupLiveCameraStream();
             cameraControl.TurnPreviewOn(true);
             new FaceDetection();
-            Thread.Sleep(5000);
-            //TODO: Remove after testing what frame looks like
-            Debug.WriteLine("Saving Frame");
-            CurrentFrame.Frame.SaveToPhotosAlbum((image, error) =>
-            {
-                Console.Error.WriteLine(@"				Error: ", error);
-            });
-
-
         }
 
         public override void DidReceiveMemoryWarning()

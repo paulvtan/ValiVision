@@ -211,7 +211,7 @@ namespace ValiVisionV2.iOS.Helper
 
                             // TODO: To be improved later
                             // Rotate the image as it's defaulted to landscape right.
-                            return UIImage.FromImage(cgImage, 10, UIImageOrientation.Right);
+                            return UIImage.FromImage(cgImage, 100, UIImageOrientation.Right);
                         }
                     }
                 }
