@@ -19,6 +19,7 @@ namespace ValiVisionV2.iOS
             cameraControl = new CameraControl(UIViewMainScreen);
             cameraControl.SetupLiveCameraStream();
             cameraControl.TurnPreviewOn(UIViewMainScreen, true);
+            new FaceDetection();
         }
 
         public override void DidReceiveMemoryWarning()

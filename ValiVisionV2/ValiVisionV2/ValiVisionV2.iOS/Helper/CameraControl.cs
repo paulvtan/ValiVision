@@ -103,6 +103,7 @@ namespace ValiVisionV2.iOS.Helper
 
                 captureSession.AddOutput(stillImageOutput);
                 captureSession.StartRunning();
+                //---------------------------------------
 
                 DebugHelper.DisplayAnnouncement("CameraStream activated");
             }
