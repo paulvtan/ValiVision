@@ -14,10 +14,12 @@ namespace ValiVisionV2
         public static string FaceApiSubscriptionKey = "84ecc0d7d7f04e13bf6739df09fbeb86";
         public static string FaceApiEndpoint = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0";
 
+        public FrameGrabber<Face[]> grabber;
+
         public FaceDetection()
         {
             // Create a grabber, with analysis type Face[].
-            FrameGrabber<Face[]> grabber = new FrameGrabber<Face[]>();
+            grabber = new FrameGrabber<Face[]>();
 
             // Create Face API client.
             FaceServiceClient faceServiceClient = new FaceServiceClient(FaceApiSubscriptionKey, FaceApiEndpoint);
@@ -55,7 +57,11 @@ namespace ValiVisionV2
             // Tell grabber when to call API.
             // See also TriggerAnalysisOnPredicate
             grabber.TriggerAnalysisOnInterval(TimeSpan.FromMilliseconds(3000));
+        }
 
+        // Start Searching for Faces. (FaceAPI)
+        public void StartFaceDetectAnalysis()
+        {
             // Start running in the background.
             grabber.StartProcessingCameraAsync().Wait();
         }

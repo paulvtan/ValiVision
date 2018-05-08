@@ -22,7 +22,10 @@ namespace ValiVisionV2.iOS
             cameraControl = new CameraControl(UIViewMainScreen);
             cameraControl.SetupLiveCameraStream();
             cameraControl.TurnPreviewOn(true);
-            new FaceDetection();
+
+            //Set up frameGrabber and start FaceAPI.
+            var frameGrabber = new FaceDetection();
+            frameGrabber.StartFaceDetectAnalysis();
         }
 
         public override void DidReceiveMemoryWarning()
