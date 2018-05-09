@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ValiVisionV2.VideoFrameAnalyzer
+namespace ValiVisionV2.iOS.VideoFrameAnalyzer
 {
     public static class ConcurrentLogger
     {

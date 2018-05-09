@@ -73,10 +73,10 @@ namespace ValiVisionV2.iOS.Helper
                     }
                     else
                     {
-                        if (this.videoPreviewLayer != null)
+                        if (videoPreviewLayer != null)
                         {
-                            CurrentUIView.Layer.Sublayers.Last().RemoveFromSuperLayer();
                             DebugHelper.DisplayActionResult("Live camera preview off");
+                            videoPreviewLayer.Hidden = true;
                         }
                         else
                         {
@@ -167,7 +167,7 @@ namespace ValiVisionV2.iOS.Helper
             try
             {
                 var image = ImageFromSampleBuffer(sampleBuffer);
-                ValiVisionV2.VideoFrameAnalyzer.CurrentFrame.Frame = image;
+                ValiVisionV2.iOS.VideoFrameAnalyzer.CurrentFrame.Frame = image;
             }
             catch (Exception e)
             {

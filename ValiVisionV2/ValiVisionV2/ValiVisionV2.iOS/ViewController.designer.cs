@@ -15,7 +15,7 @@ namespace ValiVisionV2.iOS
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton UIButtonTakePhoto { get; set; }
+        UIKit.UIButton UIButtonProceed { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -23,9 +23,9 @@ namespace ValiVisionV2.iOS
 
         void ReleaseDesignerOutlets ()
         {
-            if (UIButtonTakePhoto != null) {
-                UIButtonTakePhoto.Dispose ();
-                UIButtonTakePhoto = null;
+            if (UIButtonProceed != null) {
+                UIButtonProceed.Dispose ();
+                UIButtonProceed = null;
             }
 
             if (UIViewMainScreen != null) {

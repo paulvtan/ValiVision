@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UIKit;
 
-namespace ValiVisionV2.VideoFrameAnalyzer
+namespace ValiVisionV2.iOS.VideoFrameAnalyzer
 {
     // 
     // Copyright (c) Microsoft. All rights reserved.

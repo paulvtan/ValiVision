@@ -69,8 +69,10 @@
     <StartupObject>ValiVisionV2.iOS.Application</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FaceDetection.cs" />
     <Compile Include="Helper\CameraControl.cs" />
     <Compile Include="Helper\DebugHelper.cs" />
+    <Compile Include="Helper\DisplayFaceApiResult.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <None Include="app.config" />
@@ -79,6 +81,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VideoFrameAnalyzer\ConcurrentLogger.cs" />
+    <Compile Include="VideoFrameAnalyzer\FrameGrabber.cs" />
+    <Compile Include="VideoFrameAnalyzer\VideoFrame.cs" />
     <Compile Include="ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
@@ -132,6 +137,7 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
+    <BundleResource Include="87x87.png" />
     <Content Include="Entitlements.plist" />
   </ItemGroup>
   <ItemGroup>

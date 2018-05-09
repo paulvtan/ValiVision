@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
-using ValiVisionV2.VideoFrameAnalyzer;
+using ValiVisionV2.iOS.VideoFrameAnalyzer;
 
-namespace ValiVisionV2
+namespace ValiVisionV2.iOS
 {
     public class FaceDetection
     {
@@ -73,7 +70,7 @@ namespace ValiVisionV2
                             try
                             {
                                 Console.WriteLine(e.Analysis.First().FaceId);
-                                Console.WriteLine(grabber.FacesList.Count);
+                                Console.WriteLine("Frame: " + grabber.FacesList.Count + " registered.");
                                 //Add the face to the Faces[]
                                 if (grabber.FacesList.Count < grabber.NumFacesRegisteredRequired)
                                 {
@@ -84,6 +81,7 @@ namespace ValiVisionV2
                                 {
                                     StopProcess();
                                     Console.WriteLine("Stop registering faces to array");
+                                    ViewController.StartIdCardScanning(grabber.FacesList);
                                 }
                             }
                             catch (Exception ex)
@@ -101,7 +99,7 @@ namespace ValiVisionV2
 
                 // Tell grabber when to call API.
                 // See also TriggerAnalysisOnPredicate
-                grabber.TriggerAnalysisOnInterval(TimeSpan.FromMilliseconds(3000));
+                grabber.TriggerAnalysisOnInterval(TimeSpan.FromMilliseconds(1000));
             }
             catch (Exception e)
             {
@@ -117,7 +115,7 @@ namespace ValiVisionV2
         }
 
         // Start Searching for Faces. (FaceAPI)
-        public async Task StartFaceDetectAnalysisAsync()
+        public async void StartFaceDetectAnalysisAsync()
         {
             // Start running in the background.
             await grabber.StartProcessingCameraAsync();
