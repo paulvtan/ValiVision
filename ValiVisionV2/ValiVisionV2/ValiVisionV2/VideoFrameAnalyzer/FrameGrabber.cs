@@ -1,9 +1,11 @@
 ﻿using OpenCvSharp;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ProjectOxford.Face.Contract;
 using UIKit;
 using ValiVisionV2.VideoFrameAnalyzer.VideoFrameAnalyzer;
 
@@ -15,12 +17,25 @@ namespace ValiVisionV2.VideoFrameAnalyzer
         public static UIImage Frame {get; set;}
     }
 
+    //To hold a list of faces
+    public class Faces<T>
+    {
+        public List<T> FacesList { get; set; }
+        public Faces()
+        {
+            FacesList = new List<T>();
+        }
+    }
 
     /// <summary> A frame grabber. </summary>
     /// <typeparam name="AnalysisResultType"> Type of the analysis result. This is the type that
     ///     the AnalysisFunction will return, when it calls some API on a video frame. </typeparam>
     public class FrameGrabber<AnalysisResultType>
     {
+        //Hold Num of Faces Required to be returned.
+        public int NumFacesRegisteredRequired = 0;
+        public List<Face> FacesList;
+
         #region Types
 
         /// <summary> Additional information for new frame events. </summary>
@@ -124,7 +139,7 @@ namespace ValiVisionV2.VideoFrameAnalyzer
         {
             //ConcurrentLogger.WriteLine(String.Format(format, args));
             //TODO: Un-comment to debug this class.
-            //Debug.WriteLine(String.Format(format, args));
+            Debug.WriteLine(String.Format(format, args));
         }
 
         /// <summary> Starts processing frames from a live camera. Stops any current video source
