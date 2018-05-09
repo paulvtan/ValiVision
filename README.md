@@ -20,3 +20,15 @@ accessible as it does not require expensive, specialised equipment.
 <img src="img/1.jpg"  width="300"/>
 <img src="img/2.png"  width="300"/>
 </p>
+
+<p>
+<img src="img/Architecture Diagram.PNG"  width="600"/>
+</p>
+
+# Technology
+
+- Xamarin with .NET Standard Library 
+- Azure Cognitive Services
+    * Computer Vision
+    * Face API
+    * Custom Vision
